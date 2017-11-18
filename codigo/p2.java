@@ -12,7 +12,8 @@ public class p2 {
     
     int n = Integer.parseInt(args[0]);
     
-    float[][] m1, m2 = new float[n][n];
+    float[][] m1 = new float[n][n];
+    float[][] m2 = new float[n][n];
     Random rng = new Random();
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
