@@ -4,21 +4,31 @@
   Multiiplicar duas matrizes quadráticas de dimensões NxN.
  */
 
-public class Main {
+import java.util.Random;
+
+public class p2 {
 
   public static void main (String[] args) {
     
-    float[][] m = {
-      {1,2},
-      {3,4,}
-    };
-    Matriz a = new Matriz(m);
-    a.multiplicaMatriz(a).printMatriz();
+    int n = Integer.parseInt(args[0]);
     
+    float[][] m1, m2 = new float[n][n];
+    Random rng = new Random();
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        m1[i][j] = rng.nextFloat();
+        m2[i][j] = rng.nextFloat();
+      }
+    }
+
+    Matriz a = new Matriz(m1);
+    Matriz b = new Matriz(m2);
+    a.multiplicaMatriz(b).printMatriz();
     
   }
   
 }
+
 
 class Matriz {
   

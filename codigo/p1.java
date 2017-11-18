@@ -4,11 +4,18 @@
  * Eleva ao quadrado os N elementos de um vetor e calcula a soma.
  */
 
-public class Main {
+import java.util.Random;
+
+public class p1 {
 
   public static void main (String[] args) {
     
-    float[] v = {1,2,3,4,5};
+    int n = Integer.parseInt(args[0]);
+    float[] v = new float[n];
+    Random rng = new Random();
+    for (int i = 0; i < n; i++) {
+      v[i] = rng.nextFloat();
+    }
     Vetor a = new Vetor(v);
     System.out.println(a.somaQuadrados());
     
