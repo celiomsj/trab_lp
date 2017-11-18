@@ -6,21 +6,34 @@
 package main
 
 import (
+  "flag"
   "fmt"
+  "math/rand"
+  "strconv"
   )
   
-func soma_quadrados_thread(vetor []int, c chan int) {
-  soma := 0
+func soma_quadrados_thread(vetor []float64, c chan float64) {
+  soma := 0.
   for _, e := range vetor {
     soma += e*e
   }
   c <- soma
 }
 
+
 func main() {
-  vetor := []int{1, 2, 3, 4, 5}
+
+  flag.Parse()
+  arg := flag.Arg(0)
+  n, _ := strconv.Atoi(arg)
+
+  var vetor = make([]float64, n)
+  for i := range vetor {
+    vetor[i] = rand.Float64()
+  }
   
-  c := make(chan int)
+  
+  c := make(chan float64)
   go soma_quadrados_thread(vetor[:len(vetor)/2], c)
   go soma_quadrados_thread(vetor[len(vetor)/2:], c)
   
