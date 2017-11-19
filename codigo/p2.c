@@ -6,14 +6,37 @@ Multiiplicar duas matrizes quadráticas de dimensões NxN.
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-int main() {
+int main(int argc, char *argv[]) {
 
-	double m1 [2][2] = { {1,2},{3,4} };
-	double m2 [2][2] = { {1,2},{3,4} };
-	double mm [2][2];
+	int n;
+	if (argc == 2) {
+		n = atoi(argv[1]);
+	}
 
-	void multiMatriz(double mm[2][2], double m1[2][2], double m2[2][2], int l1, int c1, int l2, int c2) {
+	srand(time(NULL));
+
+	// Para vetores grandes é necessário utilizar alocação dinâmica
+	// Necessário desalocar a memória antes do final do programa.
+	double** m1 = (double**)malloc(n * sizeof(double));
+	double** m2 = (double**)malloc(n * sizeof(double));
+	double** mm = (double**)malloc(n * sizeof(double));
+
+	int i,j;
+	for (i = 0; i < n; i++) {
+		m1[i] = (double*)malloc(n * sizeof(double));
+		m2[i] = (double*)malloc(n * sizeof(double));
+		mm[i] = (double*)malloc(n * sizeof(double));
+
+		for (j = 0; j < n; j++) {
+			m1[i][j] = ((double)rand()/(double)RAND_MAX);
+			m2[i][j] = ((double)rand()/(double)RAND_MAX);
+		}
+	}
+
+
+	void multiMatriz(double** mm, double** m1, double** m2, int l1, int c1, int l2, int c2) {
 		int i, j, a;
 
 		// if c1 == l2
@@ -32,7 +55,7 @@ int main() {
 	}
 
 
-	void printMatriz(double mm[2][2], int l, int c) {
+	void printMatriz(double** mm, int l, int c) {
 		int i,j;
 		
 
@@ -44,6 +67,16 @@ int main() {
 		}
 	}
 
- 	multiMatriz(mm, m1, m2, 2, 2, 2, 2);
-	printMatriz(mm, 2, 2);
+ 	multiMatriz(mm, m1, m2, n, n, n, n);
+	printMatriz(mm, n, n);
+
+	for (i = 0; i < n; i++) {
+		free(m1[i]);
+		free(m2[i]);
+		free(mm[i]);
+	}
+	free(m1); free(m2); free(mm);
+
+	return 0;
 }
+	
