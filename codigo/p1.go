@@ -39,5 +39,5 @@ func main() {
   
   a, b := <-c, <-c
   
-  fmt.Println(a, b, a+b)
+  fmt.Println(a+b)
 }

@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
 	int n;	
 	if (argc == 2) {
 		n = atoi(argv[1]);
-		printf("%d\n", n);
 	}
 
 	srand(time(NULL));

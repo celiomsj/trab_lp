@@ -1,7 +1,7 @@
 /**
- * Programa 1
- * 
- * Eleva ao quadrado os N elementos de um vetor e calcula a soma.
+  Programa 1
+  
+  Eleva ao quadrado os N elementos de um vetor e calcula a soma.
  */
 
 import java.util.Random;
