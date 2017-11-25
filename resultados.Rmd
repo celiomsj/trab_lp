@@ -1,0 +1,157 @@
+---
+title: "Comparações de tempo de execução"
+output: html_notebook
+---
+
+# Introdução
+
+O intuito desse projeto é comparar a implementação de programas em diferentes linguagens de programação, explorando os distintos paradigmas (e.g., imperativo, funcional, lógico). Serão abordados dois problemas:
+
+* Cálculo da soma do quadrados dos elementos de um vetor; e
+* Multiplicação de matrizes quadradas.
+
+# Método
+
+As implementações serão avaliadas pelo tempo de execução para diferentes tamanhos N, repetindo-se 30 vezes.
+
+No caso, foram utilizadas as linguagens:
+
+* C
+* Java
+* Python
+* Go
+* Prolog
+
+A implementação em C servirá como referência para comparação das demais.
+
+Os tempos foram medidos e gravados em arquivos:
+```{r}
+
+head(list.files("./profiling/", "tempo_p1*"))
+
+```
+
+
+
+Iniciamos com o carregamento dos dados.
+
+```{r}
+
+library(tidyverse)
+library(stringr)
+
+#' Definimos uma função auxiliar para a leitura dos dados e criação de uma
+#' tabela com alguns metadados para as análises.
+ler_tempo <- function(filename) {
+  prob <- str_extract(filename, "(?<=tempo_)(p.)")
+  ling <- str_extract(filename, "(?<=_p._)(\\w+)(?=_\\d)")
+  n <- str_extract(filename, "(?<=_)(\\d+)(?=\\.txt)")
+  df <- read.csv(filename, sep = "\t", dec = ".", header = F, col.names = c("real", "user", "system"))
+  df$prob <- prob
+  df$ling <- ling
+  df$n <- as.integer(n)
+  
+  return(df)
+}
+
+# Leitura ----
+arqs <- list.files("./profiling", "tempo*", full.names = T)
+#arqs = dir("./profiling/", pattern = "tempo*", full.names = T)
+
+tempos <- lapply(arqs, ler_tempo)
+tempos <- bind_rows(tempos)
+head(tempos)
+
+```
+
+
+## Problema 1
+
+Para este problema, foram utilizados, a princípio, N igual a 1.000, 10.000 e 1.000.000.
+
+### Resultados
+
+Segue tabela com as medidas descritivas dos tempos:
+```{r, echo=T}
+tempos %>% filter(prob == "p1") %>%
+  group_by(ling, n) %>% summarise(media = mean(user), desvp = sd(user)) %>%
+  knitr::kable(format = 'html',
+               format.args = list(big.mark= '.', decimal.mark = ",",
+                                  scientific = F, digits = 1, nsmall = c(0,3,3)),
+               col.names = c("Linguagem", "N", "Média (s)", "Desvio Padrão"))
+```
+
+\s\s
+
+Observamos que os tempos divergiram bastante segundo a linguagem utlizada e que os desvios padrões ficou bem reduzido para as 30 repetições, o que indica tempos bem próximos.
+
+
+A diferença entre as linguagens e o comportamento do desempenho de acordo com o tamanho do vetor fica mais claro ao observarmos o seguinte gráfico.
+
+
+```{r, echo = T }
+tempos %>% filter(prob == "p1") %>% ggplot(aes(x = n, y = user, color = ling)) +
+  geom_point() +
+  labs(title = "Resultados - Problema 1", subtitle = "Tempo de execução por linguagem e N",
+       x = "N", y = "User time (s)")+
+  scale_x_log10(breaks=c(1000, 10000, 1000000),
+                labels=scales::format_format(big.mark=".", decimal.mark=",", scientific=F)) +
+  scale_y_continuous(labels = scales::format_format(big.mark=".", decimal.mark=",", scientific=F)) +
+  scale_color_discrete("Linguagem") +
+  geom_smooth(
+    method='nls',
+    formula = y ~ x,
+    method.args=list(
+      formula = y ~ exp(a + b*x),
+      start=list(a=0, b=0)),
+    se = F)
+
+```
+
+Ao gráfico foi adicionado uma curva de ajuste aos dados, para facilitar a observação. Mesmo com apenas três valores distintos para N, conseguimos capturar bem o comportamento dos dados.
+
+
+## Problema 2
+
+Para este problema, foram utilizados, a princípio, N igual a 1.000, 10.000 e 1.000.000.
+
+### Resultados
+```{r, echo=T}
+tempos %>% filter(prob == "p2") %>%
+  group_by(ling, n) %>% summarise(media = mean(user), desvp = sd(user)) %>%
+  knitr::kable(format = 'html',
+               format.args = list(big.mark= '.', decimal.mark = ",",
+                                  scientific = F, digits = 1, nsmall = c(0,3,3)),
+               col.names = c("Linguagem", "N", "Média (s)", "Desvio Padrão"))
+```
+
+
+\s\s
+
+Para o Problema 2, como esperado, os tempos são bem mais longos. Uma restrição ao tempo de execução foi necessária e, com isso, não foi possível executar os programas para os mesmo valores de N para determinadas linguagens.
+
+
+```{r, echo=T}
+tempos %>% filter(prob == "p2") %>%
+  ggplot(aes(x = n, y = user, color = ling)) +
+  geom_point() +
+  labs(title = "Resultados - Problema 2",
+       subtitle = "Tempo de execução por linguagem e N",
+       x = "N", y = "User time (s)") +
+  scale_x_continuous(labels = scales::format_format(big.mark=".", decimal.mark=",", scientific=FALSE)) +
+  scale_y_continuous(labels = scales::format_format(big.mark=".", decimal.mark=",", scientific=F)) +
+  scale_color_discrete("Linguagem") +
+  geom_smooth(
+    method='nls',
+    formula = y ~ a*x^3 + b*x^4,
+    method.args=list(
+      formula = y ~ a*x^3 + b*x^4,
+      start=list(a=1, b=1)),
+    se = F)
+
+```
+
+Observando o gráfico, mesmo com o a restrição ao tamanho das matrizes para algumas linguagens, ainda conseguimos ajustar bem uma curva aos dados, possibilitando a identifiação do comportamento dos algoritmos com a alteração do tamanho de N.
+
+
+

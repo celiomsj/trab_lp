@@ -5,7 +5,7 @@ rm -f tempo_p1*.txt
 TIMEFORMAT=$'%R\t%U\t%S'
 
 # C
-gcc -o ../codigo/p1_c p1.c
+gcc -o p1_c ../codigo/p1.c
 
 for i in {1..30}
 do
@@ -47,7 +47,7 @@ for i in {1..30}
 do
 	(time python3.5 ../codigo/p1.py 1000) 2>> tempo_p1_python_1000.txt
 	(time python3.5 ../codigo/p1.py 10000) 2>> tempo_p1_python_10000.txt
-	(time python3.5 ../codigo/p1.py 1000000) 2>> tempo_p1_python_100000.txt
+	(time python3.5 ../codigo/p1.py 1000000) 2>> tempo_p1_python_1000000.txt
 	sleep 1 # solução pra seed do rng
 done
 
